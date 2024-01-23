@@ -20,6 +20,7 @@ if uploaded_file is not None:
     <body>
       <div id="pdf-viewer"></div>
       <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://mozilla.github.io/pdf.js/build/pdf.worker.js';
         var loadingTask = pdfjsLib.getDocument({{data: atob("{pdf_base64}")}});
         loadingTask.promise.then(function(pdf) {{
           console.log('PDF loaded');
@@ -27,7 +28,7 @@ if uploaded_file is not None:
           // Get div container
           var container = document.getElementById('pdf-viewer');
 
-          // Loop over each page in the PDF
+          // Load all pages
           for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {{
             pdf.getPage(pageNum).then(function(page) {{
               console.log('Page loaded');
@@ -45,8 +46,7 @@ if uploaded_file is not None:
                 canvasContext: context,
                 viewport: viewport
               }};
-              var renderTask = page.render(renderContext);
-              renderTask.promise.then(function () {{
+              page.render(renderContext).promise.then(function () {{
                 console.log('Page rendered');
               }});
 
@@ -64,4 +64,4 @@ if uploaded_file is not None:
     '''
 
     # Display the PDF
-    st.components.v1.html(pdf_viewer_html, height=800, scrolling=True)
+    st.components.v1.html(pdf_viewer_html, height=1000, scrolling=True)
